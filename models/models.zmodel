@@ -1,0 +1,226 @@
+
+
+model Grant {
+
+    id                String        @id @default(uuid())  
+    name            String          
+    description  String?          
+    amount        String?          
+    startDate  String?          
+    endDate      String?          
+    status        String?          
+
+organizationId  String          
+    organization  Organization?  @relation(fields: [organizationId], references: [id], name:"organization")  
+ 
+    applications  Application[]  @relation("grant")  
+    flaggedForReview  Boolean        
+    eligibility  String          
+    guideline  String          
+    timelines  String          
+    linkToSite  String          
+    grantorPhone  String          
+    grantorEmail  String          
+    grantorAddress  String?          
+    supportingDocs  String?          
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Event {
+
+    id                String        @id @default(uuid())  
+    name            String          
+    description  String          
+    startDateTime  String          
+    endDateTime  String          
+    location    String          
+
+organizationId  String          
+    organization  Organization?  @relation(fields: [organizationId], references: [id], name:"organization")  
+ 
+    organizerName  String          
+    organizerEmail  String          
+    organizerPhone  String?          
+    flaggedForReview  Boolean        
+    linkToSite  String          
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model GrantDirectory {
+
+    id                String        @id @default(uuid())  
+    name            String          
+    description  String?          
+
+organizationId  String          
+    organization  Organization?  @relation(fields: [organizationId], references: [id], name:"organization")  
+ 
+    type            String          
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Application {
+
+    id                String        @id @default(uuid())  
+    status        String?          
+    submissionDate  String?          
+
+userId        String          
+    user            User?            @relation(fields: [userId], references: [id], name:"user")  
+    grantId      String          
+    grant          Grant?          @relation(fields: [grantId], references: [id], name:"grant")  
+ 
+    documents  Document[]  @relation("application")  
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Document {
+
+    id                String        @id @default(uuid())  
+    name            String          
+    fileUrl      String?          
+    uploadDate  String?          
+
+applicationId  String          
+    application  Application?  @relation(fields: [applicationId], references: [id], name:"application")  
+ 
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Organization {
+    id               String             @id @default(uuid())
+    name             String
+    pictureUrl       String?            @default('https://i.imgur.com/BgkFiid.jpeg')
+    
+    dateCreated      DateTime           @default(now())
+    dateUpdated      DateTime           @updatedAt @default(now())
+    roles            OrganizationRole[]
+
+grants        Grant[]      @relation("organization")  
+        events        Event[]      @relation("organization")  
+        grantDirectorys  GrantDirectory[]  @relation("organization")  
+
+@@allow('all', auth().globalRole == 'ADMIN')
+    @@allow('all', roles?[user == auth() && name == 'owner'])
+    @@allow('read', roles?[user == auth()])
+}
+model OrganizationRole {
+    id             String       @id @default(uuid())
+    name           String
+    dateCreated    DateTime     @default(now())
+    dateUpdated    DateTime     @updatedAt @default(now())
+
+    userId         String
+    user           User         @relation(fields: [userId], references: [id])
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@allow('all', auth().globalRole == 'ADMIN')
+    @@allow('all', organization.roles?[user == auth() && name == 'owner'])
+    @@allow('create', organization.roles?[user == auth()] && name != 'owner')
+    @@allow('read', organization.roles?[user == auth()])
+    @@allow('delete', auth() == user)
+}
+
+enum UserStatus {
+    INVITED
+    VERIFIED
+}
+
+model User {
+    id                String             @id @default(uuid())
+    name              String?
+    email             String?            @unique
+    pictureUrl        String?            @default('https://i.imgur.com/ZdJSK3Y.jpeg')
+    tokenInvitation   String?
+    emailVerified     Boolean?
+    
+    status            UserStatus         @default(VERIFIED)
+
+    // this is the role of the user for the application
+    globalRole        String             @default('USER')
+    password          String?            @password @omit
+    dateCreated       DateTime           @default(now())
+    dateUpdated       DateTime           @updatedAt @default(now())
+    accounts          Account[]
+    sessions          Session[]
+    
+    organizationRoles OrganizationRole[]
+
+pushNotifications PushNotification[] @relation("user")
+
+applications  Application[]  @relation("user")  
+
+@@auth()
+    @@allow("all", auth().id == this.id)
+    @@allow('all', auth().globalRole == 'ADMIN')
+
+    //we only allow that user to register if they don't create an admin role
+    @@allow("create", globalRole != 'ADMIN')
+    @@allow("read", true)
+}
+
+model PushNotification {
+    id           String   @id @default(uuid())
+    endpoint     String
+    subscription String
+    dateCreated  DateTime @default(now())
+    dateUpdated  DateTime @updatedAt @default(now())
+
+    userId       String
+    user         User     @relation(fields: [userId], references: [id], name: 'user')
+
+@@allow("all", true)
+}
+
+model Account {
+    id                       String  @id @default(uuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? // @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+
+    @@allow("all", auth().id == user.id)
+}
+
+model RagVector {
+    id        String   @id @default(uuid())
+    key       String
+    url       String
+    tags      String[] @default([])
+    vectors   Bytes?   @omit
+    documents Bytes?   @omit
+
+@@allow("all", true)
+}
+
+model Session {
+    id           String   @id @default(uuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@allow("all", auth().id == user.id)
+}
