@@ -11,7 +11,7 @@ console.log(`Start models formatting in ${pathFolder}...`)
 const formatModel = filePath => {
   return new Promise((resolve, reject) => {
     exec(
-      `pnpm zenstack format --schema ${filePath}`,
+      `npm zenstack format --schema ${filePath}`,
       (error, stdout, stderr) => {
         if (error) {
           console.error(`Error formatting ${filePath}:`, stderr)

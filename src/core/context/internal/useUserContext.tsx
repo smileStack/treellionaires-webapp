@@ -47,7 +47,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const organizationsData = useOrganizationContext({ user })
 
-  const isLoggedIn = status === 'authenticated'
+  // const isLoggedIn = status === 'authenticated'
+  const isLoggedIn = true
 
   const { refetch, isLoading: isLoadingUser } = Api.user.findFirst.useQuery(
     {

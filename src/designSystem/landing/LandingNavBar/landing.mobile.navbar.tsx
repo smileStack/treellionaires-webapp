@@ -1,6 +1,5 @@
 'use client'
 
-import { useUserContext } from '@/core/context'
 import { Logo } from '@/designSystem/layouts/NavigationLayout/components/Logo'
 import {
   ArrowRightOutlined,
@@ -12,7 +11,7 @@ import { useState } from 'react'
 import LandingButton from '../LandingButton'
 
 export const LandingMobileNavbar = ({ navItems }: any) => {
-  const { isLoggedIn } = useUserContext()
+  const isLoggedIn = true //useUserContext()
   const [open, setOpen] = useState(false)
 
   return (

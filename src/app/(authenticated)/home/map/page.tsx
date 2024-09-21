@@ -1,33 +1,20 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useUserContext } from '@/core/context'
+import { Api } from '@/core/trpc'
+import { PageLayout } from '@/designSystem'
+import { SearchOutlined, SortAscendingOutlined } from '@ant-design/icons'
 import MapboxGeocoder, {
   GeocodeService,
 } from '@mapbox/mapbox-sdk/services/geocoding'
+import { Button, Input, Select, Space, Table, Typography } from 'antd'
+import dayjs from 'dayjs'
 import mapboxgl, { LngLatLike, Map } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import {
-  Typography,
-  Input,
-  Table,
-  Select,
-  DatePicker,
-  Space,
-  Button,
-} from 'antd'
-import {
-  SearchOutlined,
-  FilterOutlined,
-  SortAscendingOutlined,
-} from '@ant-design/icons'
-const { Title, Paragraph } = Typography
-import { useUserContext } from '@/core/context'
-import { useRouter, useParams } from 'next/navigation'
-import { useUploadPublic } from '@/core/hooks/upload'
+import { useParams, useRouter } from 'next/navigation'
 import { useSnackbar } from 'notistack'
-import dayjs from 'dayjs'
-import { Api } from '@/core/trpc'
-import { PageLayout } from '@/designSystem'
+import { useEffect, useRef, useState } from 'react'
+const { Title, Paragraph } = Typography
 
 export default function HomePage() {
   const router = useRouter()
@@ -46,7 +33,7 @@ export default function HomePage() {
   const [sortField, setSortField] = useState('name')
   const [sortOrder, setSortOrder] = useState<'ascend' | 'descend'>('ascend')
 
-  const { data: secrets } = Api.configuration.getPublic.useQuery({})
+  const { data: secrets } = Api.configuration.getPublic.useQuery()
   const { data: grantsData, isLoading: grantsLoading } =
     Api.grant.findMany.useQuery({})
   const { data: eventsData, isLoading: eventsLoading } =

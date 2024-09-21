@@ -34,7 +34,7 @@ export const LandingHero: React.FC<Props> = ({
           </p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <LandingButton
-              href={'/login'}
+              href={'/home'}
               className="flex gap-1 items-center justify-center "
               rel="noopener"
               size="lg"

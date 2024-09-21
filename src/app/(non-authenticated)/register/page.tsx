@@ -84,7 +84,15 @@ export default function RegisterPage() {
           >
             <Input placeholder="Your name" />
           </Form.Item>
-
+          <Form.Item
+            name="organizationName"
+            rules={[
+              { required: true, message: 'Organization Name is required' },
+            ]}
+            label="Organization Name"
+          >
+            <Input placeholder="Your organization" />
+          </Form.Item>
           <Form.Item
             label="Password"
             name="password"

@@ -25,7 +25,7 @@ export const NavigationLayout: React.FC<Props> = ({ children }) => {
   const items: NavigationItem[] = [
     {
       key: '/home',
-      label: 'Home',
+      label: 'Get Started',
       position: 'leftbar',
 
       onClick: () => goTo('/home'),
@@ -33,7 +33,7 @@ export const NavigationLayout: React.FC<Props> = ({ children }) => {
 
     {
       key: '/home/map',
-      label: 'Home',
+      label: 'Find Places to Plant Trees',
       position: 'leftbar',
 
       onClick: () => goTo('/home/map'),
@@ -41,7 +41,7 @@ export const NavigationLayout: React.FC<Props> = ({ children }) => {
 
     {
       key: '/grant-directory',
-      label: 'Grant Directory',
+      label: 'Find Grants',
       position: 'leftbar',
 
       onClick: () => goTo('/grant-directory'),

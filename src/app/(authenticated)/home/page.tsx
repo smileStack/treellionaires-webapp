@@ -1,20 +1,22 @@
 'use client'
 
-import { Typography, Row, Col, Card, Button } from 'antd'
-import { TreeOutlined, UserOutlined, BankOutlined } from '@ant-design/icons'
-const { Title, Paragraph } = Typography
 import { useUserContext } from '@/core/context'
-import { useRouter, useParams } from 'next/navigation'
-import { useUploadPublic } from '@/core/hooks/upload'
-import { useSnackbar } from 'notistack'
-import dayjs from 'dayjs'
-import { Api } from '@/core/trpc'
+import { useOrganizationContext } from '@/core/context/internal/useOrganizationContext'
 import { PageLayout } from '@/designSystem'
+import {
+  BankOutlined,
+  TrademarkCircleOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { Button, Card, Col, Row, Typography } from 'antd'
+import { useParams, useRouter } from 'next/navigation'
+import { useSnackbar } from 'notistack'
+const { Title, Paragraph } = Typography
 
 export default function HomePage() {
   const router = useRouter()
   const params = useParams<any>()
-  const { user } = useUserContext()
+  const { user } = useUserContext();
   const { enqueueSnackbar } = useSnackbar()
 
   const handleRoleSelection = (role: 'grantee' | 'grantor') => {
@@ -38,7 +40,7 @@ export default function HomePage() {
 
           <Card style={{ marginBottom: '2rem' }}>
             <Title level={2}>
-              <TreeOutlined style={{ marginRight: '0.5rem' }} />
+              <TrademarkCircleOutlined style={{ marginRight: '0.5rem' }} />
               Why Tree Planting is Important
             </Title>
             <Paragraph>

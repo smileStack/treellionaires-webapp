@@ -40,8 +40,8 @@ export default function LoginPage() {
     fetchProviders()
 
     if (Configuration.isDevelopment()) {
-      form.setFieldValue('email', 'test@test.com')
-      form.setFieldValue('password', 'password')
+      form.setFieldValue('email', '1Desmond.Dicki49@yahoo.com')
+      form.setFieldValue('password', 'TestingPW')
     }
   }, [])
 

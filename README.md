@@ -37,13 +37,13 @@ Learn more in the [official documentation](https://dev.marblism.com).
 <br />
 
 ```bash
-$ pnpm run init
+$ npm run init
 ```
 
 ## Development
 
 ```bash
-$ pnpm run dev
+$ npm run dev
 ```
 
 [View your application in your browser](http://localhost:8099)
@@ -51,8 +51,8 @@ $ pnpm run dev
 ## Production
 
 ```bash
-$ pnpm run build
-$ pnpm run start
+$ npm run build
+$ npm run start
 ```
 
 ## Support
