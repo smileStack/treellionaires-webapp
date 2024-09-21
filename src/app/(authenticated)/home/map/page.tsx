@@ -9,11 +9,13 @@ import MapboxGeocoder, {
 } from '@mapbox/mapbox-sdk/services/geocoding'
 import { Button, Input, Select, Space, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
-import mapboxgl, { LngLatLike, Map } from 'mapbox-gl'
+import mapboxgl, { Map } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { useParams, useRouter } from 'next/navigation'
 import { useSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
+import TableauEmbed from './TableauEmbed'
+
 const { Title, Paragraph } = Typography
 
 export default function HomePage() {
@@ -64,50 +66,8 @@ export default function HomePage() {
     return () => map.remove()
   }, [secrets])
 
-  useEffect(() => {
-    if (!map || !grants || !events) return
-
-    map.on('load', () => {
-      grants.forEach(grant => {
-        addMarkerToMap(grant.name, grant.grantorAddress, 'grant')
-      })
-
-      events.forEach(event => {
-        addMarkerToMap(event.name, event.location, 'event')
-      })
-    })
-  }, [map, grants, events])
-
-  const addMarkerToMap = (
-    name: string,
-    address: string,
-    type: 'grant' | 'event',
-  ) => {
-    if (!geocodingClient || !map) return
-
-    geocodingClient
-      .forwardGeocode({
-        query: address,
-        autocomplete: false,
-        limit: 1,
-      })
-      .send()
-      .then(response => {
-        const match = response.body
-        if (match.features.length > 0) {
-          const coordinates = match.features[0].center
-          new mapboxgl.Marker({
-            color: type === 'grant' ? '#1890ff' : '#52c41a',
-          })
-            .setLngLat(coordinates as LngLatLike)
-            .setPopup(
-              new mapboxgl.Popup().setHTML(
-                `<h3 style="color: black;">${name}</h3><p style="color: black;">${address}</p><p style="color: black;">${type.charAt(0).toUpperCase() + type.slice(1)}</p>`,
-              ),
-            )
-            .addTo(map)
-        }
-      })
+  const Container = ({ children, className }) => {
+    return <div className={`container ${className}`}>{children}</div>
   }
 
   const columns = [
@@ -171,12 +131,7 @@ export default function HomePage() {
           map to visualize locations and the table below for detailed
           information.
         </Paragraph>
-
-        <div
-          ref={mapContainer}
-          style={{ height: '400px', width: '100%', marginBottom: '20px' }}
-        />
-
+        <TableauEmbed />
         <Space style={{ marginBottom: '20px' }}>
           <Input
             placeholder="Search"
